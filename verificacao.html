@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de Cadastro - Supermercado Veronesi</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .auth-container { background-color: var(--surface-color); padding: 40px; border-radius: 10px; width: 100%; max-width: 450px; text-align: center; border: 1px solid var(--border-color); }
+        .auth-logo { max-width: 200px; margin-bottom: 30px; }
+        .auth-container h2 { margin-bottom: 15px; }
+        .auth-container p { margin-bottom: 30px; color: var(--text-secondary); }
+        .input-group { margin-bottom: 20px; }
+        .input-group input { width: 100%; padding: 12px; border-radius: 5px; border: 1px solid var(--border-color); background-color: var(--bg-dark); color: var(--text-primary); font-size: 1.2rem; text-align: center; letter-spacing: 10px; }
+        .auth-btn { width: 100%; padding: 12px; border: none; border-radius: 5px; background-color: var(--primary-blue); color: var(--text-primary); font-size: 1.1rem; font-weight: 700; cursor: pointer; }
+        .error-message { color: var(--primary-red); margin-top: 15px; min-height: 20px; }
+    </style>
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <a href="index.html"><img src="assets/logo.svg" alt="Logotipo Supermercado Veronesi" class="auth-logo"></a>
+        <h2>Verifique seu E-mail</h2>
+        <p>Enviamos um código de 6 dígitos para <strong id="userEmail">seu e-mail</strong>. Por favor, insira-o abaixo.</p>
+        <form id="verificationForm">
+            <div class="input-group">
+                <input type="text" id="codigo" name="codigo" required maxlength="6" pattern="\d{6}">
+            </div>
+            <button type="submit" class="auth-btn">Verificar e Ativar Conta</button>
+            <p id="errorMessage" class="error-message"></p>
+        </form>
+    </div>
+    <script src="verificacao.js"></script>
+</body>
+</html>
+

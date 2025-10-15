@@ -1,0 +1,21 @@
+{
+  "name": "Supermercado Veronesi",
+  "short_name": "Veronesi",
+  "description": "Sua compra, nosso compromisso. Faça suas encomendas online.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e53935",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "food"],
+  "lang": "pt-BR",
+  "dir": "ltr"
+}

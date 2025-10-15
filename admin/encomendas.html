@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Encomendas - Supermercado Veronesi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/cc533e21e1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <h1 class="sidebar-logo">S. Veronesi</h1>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+                <a href="encomendas.html" class="nav-item active"><i class="fa-solid fa-box-archive"></i><span>Encomendas</span></a>
+                <a href="produtos.html" class="nav-item"><i class="fa-solid fa-tags"></i><span>Produtos</span></a>
+                <a href="clientes.html" class="nav-item"><i class="fa-solid fa-users"></i><span>Clientes</span></a>
+                <a href="notificacoes.html" class="nav-item"><i class="fa-solid fa-bell"></i><span>Notificações</span></a>
+                <a href="configuracoes.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Configurações</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <button class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <h2>Gerenciar Encomendas</h2>
+            </header>
+            
+            <section class="content-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Valor Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Linhas da tabela serão inseridas aqui -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Detalhes da Encomenda -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="modalTitle">Detalhes da Encomenda #<span id="orderId"></span></h3>
+                <button class="close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <div id="orderDetails"></div>
+                <div class="input-group" style="margin-top: 20px;">
+                    <label for="statusSelect">Alterar Status</label>
+                    <select id="statusSelect">
+                        <option value="nova">Nova</option>
+                        <option value="em_separacao">Em Separação</option>
+                        <option value="pronta">Pronta para Retirada</option>
+                        <option value="retirada">Retirada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <!-- Campo de Justificativa, escondido por padrão -->
+                <div id="justificativaContainer" class="input-group" style="margin-top: 15px; display: none;">
+                    <label for="justificativaInput">Motivo do Cancelamento (Obrigatório)</label>
+                    <textarea id="justificativaInput" rows="3" placeholder="Informe ao cliente por que a encomenda foi cancelada."></textarea>
+                </div>
+            </div>
+            <footer class="modal-footer">
+                <button type="button" class="btn-secondary close-btn">Fechar</button>
+                <button type="button" id="saveStatusBtn" class="btn-primary">Salvar Status</button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="encomendas.js"></script>
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

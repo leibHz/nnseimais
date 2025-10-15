@@ -1,0 +1,10 @@
+<svg width="250" height="60" viewBox="0 0 250 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+    .v-shape { fill: #e53935; transition: fill 0.3s; }
+    .text { font-family: 'Inter', sans-serif; font-weight: 700; fill: #ffffff; transition: fill 0.3s; }
+    svg:hover .v-shape { fill: #ffffff; }
+    svg:hover .text { fill: #e53935; }
+</style>
+<path class="v-shape" d="M30 0 L0 60 H15 L30 30 L45 60 H60 L30 0 Z" />
+<text x="75" y="42" class="text" font-size="30">VERONESI</text>
+</svg>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supermercado Veronesi - Sua compra, nosso compromisso</title>
+    
+    <meta name="theme-color" content="#e53935"/>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/favicon.svg">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/cc533e21e1.js" crossorigin="anonymous"></script>
+
+    <script>
+        // SCRIPT DE ATUALIZAÇÃO IMEDIATA DO CABEÇALHO
+        (function() {
+            const cliente = JSON.parse(localStorage.getItem('cliente'));
+            const navHTML = cliente
+                ? `<a href="minha-conta.html" class="nav-link"><i class="fa-solid fa-user"></i> Minha Conta</a>
+                   <a href="#" id="logoutBtn" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>`
+                : `<a href="login.html" class="nav-link"><i class="fa-solid fa-right-to-bracket"></i> Entrar</a>`;
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                const navContainer = document.querySelector('.main-nav');
+                if (navContainer) {
+                    navContainer.innerHTML = `
+                        ${navHTML}
+                        <a href="encomenda.html" class="nav-link cart-link">
+                            <i class="fa-solid fa-cart-shopping"></i> Encomenda
+                            <span id="cart-counter" class="cart-counter">0</span>
+                        </a>
+                    `;
+
+                    if (cliente) {
+                        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                            e.preventDefault();
+                            localStorage.clear();
+                            sessionStorage.clear();
+                            window.location.href = 'index.html';
+                        });
+                    }
+                }
+            });
+        })();
+    </script>
+    
+    <style>
+        /* Estilos para o botão de notificações */
+        .notification-prompt {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(229, 57, 53, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            align-items: center;
+            gap: 10px;
+            animation: slideInUp 0.5s ease, pulse 2s infinite;
+            transition: all 0.3s ease;
+        }
+        .notification-prompt:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(229, 57, 53, 0.6);
+        }
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .notification-prompt i {
+            font-size: 1.3rem;
+            animation: ring 2s infinite;
+        }
+        @keyframes ring {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30% { transform: rotate(-10deg); }
+            20%, 40% { transform: rotate(10deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/logo.svg" alt="Logotipo Supermercado Veronesi" class="logo">
+            </a>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="O que você procura?">
+            </div>
+            <nav class="main-nav">
+                <!-- Conteúdo inserido pelo script no <head> -->
+            </nav>
+        </div>
+    </header>
+    
+    <div id="store-status-banner"></div>
+
+    <!-- Botão de Notificações Push -->
+    <button id="notification-prompt" class="notification-prompt hidden">
+        <i class="fa-solid fa-bell"></i>
+        <span>Receber Notificações</span>
+    </button>
+
+
+    <main class="container">
+        <section class="hero-banner">
+            <div class="hero-overlay">
+                <h1>Supermercado Veronesi</h1>
+                <h2>Ofertas da Semana</h2>
+                <p>Produtos frescos e de qualidade com preços que cabem no seu bolso.</p>
+            </div>
+        </section>
+
+        <section class="filters-container">
+            <div id="tag-filters" class="tag-filters"></div>
+            <nav id="session-nav" class="session-nav"></nav>
+        </section>
+
+        <section class="controls-section">
+            <div class="filters">
+                <label class="switch">
+                    <input type="checkbox" id="promoFilter">
+                    <span class="slider"></span>
+                </label>
+                <span>Apenas promoções</span>
+            </div>
+            <div class="sorting">
+                <label for="sortOptions">Ordenar por:</label>
+                <select id="sortOptions">
+                    <option value="alfabetica_asc">Ordem Alfabética (A-Z)</option>
+                    <option value="alfabetica_desc">Ordem Alfabética (Z-A)</option>
+                    <option value="preco_asc">Preço (Menor ao Maior)</option>
+                    <option value="preco_desc">Preço (Maior ao Menor)</option>
+                </select>
+            </div>
+        </section>
+
+        <section id="product-display-area">
+            <!-- Os produtos serão exibidos aqui -->
+        </section>
+
+        <section id="location-section" class="location-section">
+            <h2 class="section-title">Nossa Localização</h2>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d386.47876527412177!2d-46.54639458217851!3d-22.845912118163913!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cec9bfc0000001%3A0xc8bc4762395cd39!2sJurandir%20Veronesi!5e0!3m2!1spt-BR!2sbr!4v1759018805655!5m2!1spt-BR!2sbr" width="100%" height="450" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 Supermercado Veronesi. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal para Detalhes do Produto -->
+    <div id="product-details-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="modal-product-name" class="modal-title">Nome do Produto</h3>
+                <button class="modal-close-btn" id="modal-close-button">&times;</button>
+            </header>
+            <div class="modal-body">
+                <img id="modal-product-image" src="" alt="Imagem do Produto">
+                <p id="modal-product-price">R$ 0,00</p>
+                <p id="modal-product-description">Descrição do produto aqui...</p>
+            </div>
+            <footer class="modal-footer">
+                <button id="modal-add-to-cart-btn" class="add-to-cart-btn">
+                    <i class="fa-solid fa-plus"></i> Adicionar à Encomenda
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="push-notifications.js"></script>
+</body>
+</html>

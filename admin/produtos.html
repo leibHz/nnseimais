@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Produtos - Supermercado Veronesi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/cc533e21e1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <h1 class="sidebar-logo">S. Veronesi</h1>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+                <a href="encomendas.html" class="nav-item"><i class="fa-solid fa-box-archive"></i><span>Encomendas</span></a>
+                <a href="produtos.html" class="nav-item active"><i class="fa-solid fa-tags"></i><span>Produtos</span></a>
+                <a href="clientes.html" class="nav-item"><i class="fa-solid fa-users"></i><span>Clientes</span></a>
+                <a href="configuracoes.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Configurações</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <button class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <h2>Gerenciar Produtos</h2>
+                <button id="addProductBtn" class="btn-primary"><i class="fa-solid fa-plus"></i> Adicionar Produto</button>
+            </header>
+            
+            <section class="content-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Disponível</th>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Cód. Barras</th>
+                            <th>Sessão</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Produto -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="modalTitle">Adicionar Novo Produto</h3>
+                <button class="close-btn">&times;</button>
+            </header>
+            <form id="productForm" enctype="multipart/form-data">
+                <input type="hidden" id="productId" name="id_produto">
+                <input type="hidden" id="imagem_atual" name="imagem_atual">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="nome">Nome do Produto</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="preco">Preço (por Unidade ou KG)</label>
+                            <input type="number" id="preco" name="preco" step="0.01" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="codigo_barras">Código de Barras</label>
+                            <input type="text" id="codigo_barras" name="codigo_barras" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="id_sessao">Sessão</label>
+                            <select id="id_sessao" name="id_sessao" required></select>
+                        </div>
+                        <div class="input-group">
+                            <label for="unidade_medida">Vendido por</label>
+                            <select id="unidade_medida" name="unidade_medida" required>
+                                <option value="un">Unidade (un)</option>
+                                <option value="kg">Quilograma (kg)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="descricao">Descrição</label>
+                        <textarea id="descricao" name="descricao" rows="3"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Tags (selecione ao menos uma)</label>
+                        <div id="tags-checkbox-container" class="checkbox-group"></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="imagem">Imagem do Produto</label>
+                        <input type="file" id="imagem" name="imagem" accept="image/*">
+                        <div id="imagePreviewContainer" style="margin-top: 10px; display: none;">
+                            <p>Imagem Atual:</p>
+                            <img id="imagePreview" src="" alt="Preview" style="max-width: 100px; border-radius: 5px;">
+                        </div>
+                    </div>
+                    <div class="input-group-inline">
+                        <label for="disponivel">Produto Disponível?</label>
+                        <label class="switch">
+                            <input type="checkbox" id="disponivel" name="disponivel">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                     <div class="input-group-inline">
+                        <label for="em_promocao">Em Promoção?</label>
+                        <label class="switch">
+                            <input type="checkbox" id="em_promocao" name="em_promocao">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="btn-secondary close-btn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </footer>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="produtos.js"></script>
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

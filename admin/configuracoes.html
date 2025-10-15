@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - Supermercado Veronesi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/cc533e21e1.js" crossorigin="anonymous"></script>
+    <style>
+        .status-preview {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 2px solid #16213e;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .status-aberto {
+            background: rgba(0, 200, 83, 0.2);
+            color: #00c853;
+        }
+        .status-fechado {
+            background: rgba(229, 57, 53, 0.2);
+            color: #e53935;
+        }
+        .info-box {
+            background: rgba(30, 136, 229, 0.1);
+            border-left: 4px solid #1e88e5;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background: rgba(255, 167, 38, 0.1);
+            border-left: 4px solid #ffa726;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .cache-info {
+            font-size: 0.9rem;
+            color: var(--admin-text-secondary);
+            margin-top: 10px;
+        }
+        .refresh-btn {
+            background: var(--admin-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .refresh-btn:hover {
+            background: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <h1 class="sidebar-logo">S. Veronesi</h1>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+                <a href="encomendas.html" class="nav-item"><i class="fa-solid fa-box-archive"></i><span>Encomendas</span></a>
+                <a href="produtos.html" class="nav-item"><i class="fa-solid fa-tags"></i><span>Produtos</span></a>
+                <a href="clientes.html" class="nav-item"><i class="fa-solid fa-users"></i><span>Clientes</span></a>
+                <a href="configuracoes.html" class="nav-item active"><i class="fa-solid fa-gear"></i><span>Configurações</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <button class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <h2>Configurações do Site</h2>
+            </header>
+            
+            <!-- Preview do Status Atual -->
+            <div class="status-preview">
+                <h3><i class="fa-solid fa-circle-info"></i> Status Atual da Loja</h3>
+                <div id="status-atual">
+                    <div class="spinner-sm"></div> Carregando...
+                </div>
+                <button id="refresh-status-btn" class="refresh-btn">
+                    <i class="fa-solid fa-arrows-rotate"></i> Atualizar Status
+                </button>
+            </div>
+
+            <section class="settings-form-container">
+                <form id="settingsForm">
+                    <h3>Horários de Funcionamento</h3>
+                    <div class="info-box">
+                        <i class="fa-solid fa-lightbulb"></i> <strong>Dica:</strong> O sistema detecta automaticamente domingos e feriados, por opreucaução, recomendamos usar o "forçar aberto/fechado" junto para não ocorrer bugs
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="horario_seg_sex_abre">Seg a Sex (Abertura)</label>
+                            <input type="time" id="horario_seg_sex_abre" name="horario_seg_sex_abre">
+                        </div>
+                        <div class="input-group">
+                            <label for="horario_seg_sex_fecha">Seg a Sex (Fechamento)</label>
+                            <input type="time" id="horario_seg_sex_fecha" name="horario_seg_sex_fecha">
+                        </div>
+                        <div class="input-group">
+                            <label for="horario_sab_abre">Sábados (Abertura)</label>
+                            <input type="time" id="horario_sab_abre" name="horario_sab_abre">
+                        </div>
+                        <div class="input-group">
+                            <label for="horario_sab_fecha">Sábados (Fechamento)</label>
+                            <input type="time" id="horario_sab_fecha" name="horario_sab_fecha">
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 30px;">Sistema de Encomendas</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="status_manual">Status da Loja</label>
+                            <select id="status_manual" name="status_manual">
+                                <option value="auto">Automático (horário + feriados)</option>
+                                <option value="aberto">Forçar Aberto</option>
+                                <option value="fechado">Forçar Fechado</option>
+                            </select>
+                        </div>
+                        <div class="input-group-inline">
+                            <label for="encomendas_ativas">Ativar serviço de encomendas?</label>
+                            <label class="switch">
+                                <input type="checkbox" id="encomendas_ativas" name="encomendas_ativas">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção:</strong> Mesmo com o status manual "Forçar Aberto", o sistema ainda precisa que "Encomendas Ativas" esteja ligado.
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 20px;">
+                        <label for="mensagem_status">Mensagem (quando fechado)</label>
+                        <input type="text" id="mensagem_status" name="mensagem_status" placeholder="Ex: Voltamos em breve!">
+                        <small class="cache-info">Esta mensagem aparece quando a loja está fechada manualmente</small>
+                    </div>
+
+                    <!-- Informações sobre Feriados -->
+                    <div class="info-box" style="margin-top: 30px;">
+                        <h4><i class="fa-solid fa-calendar-days"></i> Detecção de Feriados</h4>
+                        <p>creditos a<strong>Brasil API</strong> por ajudar na detecção de Feriados</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li> desenvolvedor principal: gabriel ferreira da silva</li>
+                            <li> hospedagem: hostinger</li>
+                            <li> IDE: visual studio code</li>
+                        </ul>
+                        <div id="feriados-info" style="margin-top: 15px;">
+                            <div class="spinner-sm"></div> Carregando informações...
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 30px;">
+                        <button type="submit" class="btn-primary">Salvar Configurações</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="configuracoes.js"></script>
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('open');
+        });
+
+        // Função para atualizar o preview do status
+        async function atualizarStatusPreview() {
+            const statusDiv = document.getElementById('status-atual');
+            const feriadosDiv = document.getElementById('feriados-info');
+            
+            try {
+                const response = await fetch('../api/api_site_info.php?_=' + new Date().getTime());
+                const data = await response.json();
+                
+                if (data) {
+                    const statusClass = data.pode_encomendar ? 'status-aberto' : 'status-fechado';
+                    const statusIcon = data.pode_encomendar ? 'fa-circle-check' : 'fa-circle-xmark';
+                    const statusTexto = data.pode_encomendar ? 'ABERTO' : 'FECHADO';
+                    
+                    let html = `
+                        <div class="status-badge ${statusClass}">
+                            <i class="fa-solid ${statusIcon}"></i> ${statusTexto}
+                        </div>
+                        <p><strong>Mensagem para Clientes:</strong> ${data.mensagem_loja_real}</p>
+                        <p><strong>Status Manual:</strong> ${data.status_manual === 'auto' ? 'Automático' : (data.status_manual === 'aberto' ? 'Forçado Aberto' : 'Forçado Fechado')}</p>
+                        <p><strong>Encomendas Ativas:</strong> ${data.encomendas_ativas ? '✅ Sim' : '❌ Não'}</p>
+                        <p><strong>Hoje é Feriado:</strong> ${data.eh_feriado ? '🎉 SIM' : '➖ Não'}</p>
+                    `;
+                    
+                    if (data.proxima_abertura) {
+                        html += `
+                            <p><strong>Próxima Abertura:</strong> ${data.proxima_abertura.dia_semana}, ${data.proxima_abertura.data} às ${data.proxima_abertura.hora_abre}</p>
+                        `;
+                    }
+                    
+                    html += `<p style="font-size: 0.85rem; color: var(--admin-text-secondary); margin-top: 10px;">
+                        <i class="fa-solid fa-clock"></i> Atualizado em: ${new Date(data.timestamp).toLocaleString('pt-BR')}
+                    </p>`;
+                    
+                    statusDiv.innerHTML = html;
+                    
+                    // Atualiza informações de feriados
+                    const hoje = new Date();
+                    const ano = hoje.getFullYear();
+                    feriadosDiv.innerHTML = `
+                        <p><strong>Ano:</strong> ${ano}</p>
+                        <p><strong>Cache:</strong> Ativo (atualizado automaticamente a cada 30 dias)</p>
+                        <p style="margin-top: 10px;">
+                            <a href="test_feriados.php" target="_blank" style="color: var(--admin-blue);">
+                                <i class="fa-solid fa-vial"></i> Testar Sistema de Feriados
+                            </a>
+                        </p>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p style="color: var(--admin-red);">❌ Erro ao carregar status</p>';
+                console.error('Erro:', error);
+            }
+        }
+        
+        // Atualiza o status ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarStatusPreview();
+            
+            // Atualiza o status a cada 30 segundos
+            setInterval(atualizarStatusPreview, 30000);
+        });
+        
+        // Botão de atualização manual
+        document.getElementById('refresh-status-btn').addEventListener('click', atualizarStatusPreview);
+    </script>
+</body>
+</html>

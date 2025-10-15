@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Painel Administrativo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="[https://kit.fontawesome.com/cc533e21e1.js](https://kit.fontawesome.com/cc533e21e1.js)" crossorigin="anonymous"></script>
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <h1 class="login-logo">Supermercado Veronesi</h1>
+        <h2>Acesso Restrito</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" required>
+            </div>
+            <button type="submit" class="login-btn">
+                <span id="btn-text">Entrar</span>
+                <div id="btn-loader" class="spinner-sm hidden"></div>
+            </button>
+            <p id="errorMessage" class="error-message"></p>
+        </form>
+    </div>
+    <script src="auth.js"></script>
+</body>
+</html>
+

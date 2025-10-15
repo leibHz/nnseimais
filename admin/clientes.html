@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Clientes - Supermercado Veronesi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/cc533e21e1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <h1 class="sidebar-logo">S. Veronesi</h1>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+                <a href="encomendas.html" class="nav-item"><i class="fa-solid fa-box-archive"></i><span>Encomendas</span></a>
+                <a href="produtos.html" class="nav-item"><i class="fa-solid fa-tags"></i><span>Produtos</span></a>
+                <a href="clientes.html" class="nav-item active"><i class="fa-solid fa-users"></i><span>Clientes</span></a>
+                <a href="notificacoes.html" class="nav-item"><i class="fa-solid fa-bell"></i><span>Notificações</span></a>
+                <a href="configuracoes.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Configurações</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <button class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <h2>Gerenciar Clientes</h2>
+            </header>
+            
+            <section class="content-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome Completo</th>
+                            <th>Email</th>
+                            <th>Data de Cadastro</th>
+                            <th>Notificações</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody">
+                        <!-- Linhas da tabela serão inseridas aqui via JS -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Enviar Notificação -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <header class="modal-header">
+                <h3>Enviar Notificação para <span id="clientNameNotif"></span></h3>
+                <button class="close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="notificationForm">
+                    <input type="hidden" id="clientIdNotif">
+                    <div class="input-group">
+                        <label for="notifTitle">Título</label>
+                        <input type="text" id="notifTitle" placeholder="Ex: Sua encomenda está pronta!" required maxlength="65">
+                    </div>
+                    <div class="input-group">
+                        <label for="notifBody">Mensagem</label>
+                        <textarea id="notifBody" rows="3" placeholder="Ex: Aguardamos você para retirar" required maxlength="200"></textarea>
+                    </div>
+                </form>
+            </div>
+            <footer class="modal-footer">
+                <button type="button" class="btn-secondary close-btn">Cancelar</button>
+                <button type="button" id="sendNotifBtn" class="btn-primary">
+                    <i class="fa-solid fa-bell"></i> Enviar Notificação
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modal para Confirmar Exclusão -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <header class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button class="close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <p>Você tem certeza que deseja excluir a conta do cliente <strong id="clientNameToDelete"></strong>?</p>
+                <p><strong>Atenção:</strong> Esta ação não pode ser desfeita. As encomendas associadas a este cliente podem ficar sem referência.</p>
+            </div>
+            <footer class="modal-footer">
+                <button type="button" class="btn-secondary close-btn">Cancelar</button>
+                <button type="button" id="confirmDeleteBtn" class="btn-primary" style="background-color: var(--admin-red);">Excluir</button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="clientes.js"></script>
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>
