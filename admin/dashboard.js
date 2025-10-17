@@ -1,16 +1,21 @@
-// ARQUIVO: admin/dashboard.js (COM ATUALIZAÇÃO EM TEMPO REAL)
+// ARQUIVO: admin/dashboard.js (CORRIGIDO - VERSÃO FINAL)
 document.addEventListener('DOMContentLoaded', () => {
     // Só executa se não estiver na página de login
     if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('admin/')) {
         return;
     }
 
+    // CORREÇÃO 1: Buscar o elemento correto que existe no HTML
     const adminNameEl = document.getElementById('adminName');
-    const logoutBtn = document.getElementById('logout-button'); // ID corrigido para corresponder ao HTML
+    
+    // CORREÇÃO 2: ID correto do botão de logout
+    const logoutBtn = document.getElementById('logoutBtn');
     
     const adminName = sessionStorage.getItem('admin_nome');
-    if (adminName) {
-        // Esta parte pode ser removida se o nome não for exibido, mas mantida por segurança
+    
+    // CORREÇÃO 3: Exibir o nome do administrador se o elemento existir
+    if (adminName && adminNameEl) {
+        adminNameEl.textContent = adminName;
     }
 
     // --- LOGOUT ---
@@ -28,9 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(statsUrl);
             const stats = await response.json();
 
-            document.getElementById('totalProdutos').textContent = stats.total_produtos;
-            document.getElementById('totalClientes').textContent = stats.total_clientes;
-            document.getElementById('totalEncomendas').textContent = stats.total_encomendas;
+            // Atualiza os elementos se existirem
+            const totalProdutosEl = document.getElementById('totalProdutos');
+            const totalClientesEl = document.getElementById('totalClientes');
+            const totalEncomendasEl = document.getElementById('totalEncomendas');
+
+            if (totalProdutosEl) totalProdutosEl.textContent = stats.total_produtos;
+            if (totalClientesEl) totalClientesEl.textContent = stats.total_clientes;
+            if (totalEncomendasEl) totalEncomendasEl.textContent = stats.total_encomendas;
 
         } catch (error) {
             console.error('Erro ao buscar estatísticas:', error);
@@ -40,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Chama a função para carregar os dados imediatamente
     fetchDashboardStats();
     
-    // Bug 5: Atualiza as estatísticas a cada 30 segundos
+    // Atualiza as estatísticas a cada 30 segundos
     setInterval(fetchDashboardStats, 30000); 
 });
-

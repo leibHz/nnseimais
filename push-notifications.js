@@ -1,14 +1,14 @@
-// Ficheiro: push-notifications.js (VERSÃO OTIMIZADA E CORRIGIDA)
+// Ficheiro: push-notifications.js (VERSÃO CORRIGIDA - APENAS USUÁRIOS LOGADOS)
+// BE9uBAyJB7pNQWsh7U7GbvxphNlFslYQaQguc6aYxuBXbWUd_7aZy0Kq6G7wcRUTHtIw6o27vQlhCEaM7hhcfGY
 
-// ATENÇÃO: Substitua esta chave pela sua chave pública VAPID.
-const VAPID_PUBLIC_KEY = 'BL-VAB4fZOhyco0eMUvU1uUevvs0ctR5mSI-kRHrMLmyIS2BoUb4iGwZ_l2bCct8JdxwI5XMKqPoG2a_eA2UjBY';
+// Ficheiro: push-notifications.js (VERSÃO FINAL - TODOS OS BUGS CORRIGIDOS)
+
+const VAPID_PUBLIC_KEY = 'BE9uBAyJB7pNQWsh7U7GbvxphNlFslYQaQguc6aYxuBXbWUd_7aZy0Kq6G7wcRUTHtIw6o27vQlhCEaM7hhcfGY';
 
 console.log('🔔 push-notifications.js carregado');
 
 /**
  * Converte uma string base64 (URL safe) para um Uint8Array.
- * @param {string} base64String A chave pública VAPID.
- * @returns {Uint8Array}
  */
 function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -31,20 +31,31 @@ function urlBase64ToUint8Array(base64String) {
 async function initPushNotifications() {
     console.log('🚀 Inicializando sistema de notificações...');
     
-    // 1. Verifica se o navegador suporta as tecnologias necessárias
+    // ✅ CORREÇÃO 1: Verifica se o usuário está logado ANTES de continuar
+    const cliente = JSON.parse(localStorage.getItem('cliente'));
+    if (!cliente || !cliente.id_cliente) {
+        console.log('❌ Usuário não está logado. Notificações desabilitadas.');
+        const btn = document.getElementById('notification-prompt');
+        if (btn) btn.remove();
+        return;
+    }
+    
+    console.log('✅ Usuário logado:', cliente.nome_completo);
+    
+    // Verifica se o navegador suporta as tecnologias necessárias
     if (!('serviceWorker' in navigator && 'PushManager' in window)) {
         console.warn('❌ Seu navegador não suporta notificações push.');
         return;
     }
 
     try {
-        // 2. Registra o Service Worker (melhor prática: fazer isso apenas uma vez)
+        // Registra o Service Worker
         console.log('📝 Registrando Service Worker...');
         const registration = await navigator.serviceWorker.register('./service-worker.js');
         await navigator.serviceWorker.ready;
         console.log('✅ Service Worker pronto');
 
-        // 3. Após o SW estar pronto, configura o botão
+        // Configura o botão
         await setupNotificationButton(registration);
 
     } catch (error) {
@@ -54,7 +65,6 @@ async function initPushNotifications() {
 
 /**
  * Verifica a permissão e o status da inscrição para decidir se mostra o botão.
- * @param {ServiceWorkerRegistration} registration O registro do Service Worker.
  */
 async function setupNotificationButton(registration) {
     const btn = document.getElementById('notification-prompt');
@@ -63,57 +73,92 @@ async function setupNotificationButton(registration) {
         return;
     }
 
-    // Não mostra o botão se a permissão foi explicitamente negada
+    // ✅ CORREÇÃO BUG 1: Esconde botão se permissão foi negada
     if (Notification.permission === 'denied') {
         console.log('❌ Permissão negada permanentemente pelo usuário.');
+        btn.remove();
         return;
     }
 
-    // Verifica se já existe uma inscrição ativa
+    // ✅ CORREÇÃO BUG 1: Verifica se já existe uma inscrição ativa
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
-        console.log('✅ Usuário já inscrito.');
+        console.log('✅ Usuário já inscrito. Botão não será exibido.');
+        btn.remove(); // Remove o botão permanentemente
         return;
+    }
+
+    // ✅ CORREÇÃO BUG 1: Esconde se já concedeu permissão mas perdeu inscrição
+    if (Notification.permission === 'granted') {
+        console.log('🔔 Permissão concedida mas sem inscrição. Tentando reinscrever automaticamente...');
+        const success = await subscribeUser(registration);
+        if (success) {
+            btn.remove();
+            return;
+        }
     }
 
     // Se chegou até aqui, o usuário pode se inscrever. Mostra o botão.
     console.log('🔔 Usuário não inscrito. Mostrando botão...');
-    btn.classList.remove('hidden'); // Usa classe para controlar visibilidade
-    btn.classList.add('show', 'pulse');
-
-    // Adiciona o evento de clique uma única vez
-    btn.addEventListener('click', async () => {
+    btn.classList.remove('hidden');
+    btn.classList.add('show');
+    
+    // ✅ CORREÇÃO BUG 3: Melhora compatibilidade mobile
+    // Adiciona evento de clique E de touch
+    const handleClick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
         console.log('🖱️ Botão clicado');
-        btn.classList.add('hidden'); // Esconde o botão imediatamente
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Aguarde...</span>';
         
         const success = await subscribeUser(registration);
         
-        if (!success) {
-            // Se a inscrição falhar, mostra o botão novamente após um tempo
+        if (success) {
+            btn.remove(); // ✅ CORREÇÃO BUG 1: Remove após sucesso
+        } else {
+            // Se falhar, restaura o botão após 3 segundos
             setTimeout(() => {
-                console.log('🤔 Falha na inscrição. Mostrando botão novamente.');
-                btn.classList.remove('hidden');
-            }, 5000);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-bell"></i> <span>Receber Notificações</span>';
+            }, 3000);
         }
-    });
+    };
+    
+    // ✅ CORREÇÃO BUG 3: Adiciona listeners para desktop e mobile
+    btn.addEventListener('click', handleClick, { once: true });
+    btn.addEventListener('touchend', handleClick, { once: true });
 }
 
 /**
  * Executa o processo de solicitação de permissão e inscrição do usuário.
- * @param {ServiceWorkerRegistration} registration O registro do Service Worker.
- * @returns {Promise<boolean>} Retorna true se a inscrição for bem-sucedida.
  */
 async function subscribeUser(registration) {
     try {
+        // Verifica novamente se está logado antes de inscrever
+        const cliente = JSON.parse(localStorage.getItem('cliente'));
+        if (!cliente || !cliente.id_cliente) {
+            throw new Error('Você precisa estar logado para ativar as notificações.');
+        }
+
         // 1. Solicita permissão ao usuário
         console.log('🔔 Solicitando permissão...');
+        
+        // ✅ CORREÇÃO BUG 3: Aguarda um pouco no mobile antes de solicitar
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+        }
+        
         const permission = await Notification.requestPermission();
+        
         if (permission !== 'granted') {
             throw new Error('Permissão de notificação não concedida.');
         }
         console.log('✅ Permissão concedida');
 
         // 2. Cria a inscrição (subscription)
+        console.log('📝 Criando inscrição...');
         const subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
@@ -125,14 +170,14 @@ async function subscribeUser(registration) {
         console.log('✅ Inscrição salva no servidor!');
         
         // 4. Mostra feedback de sucesso
-        showFeedback('success', 'Notificações Ativadas!', 'Você receberá ofertas e novidades.');
+        showFeedback('success', 'Notificações Ativadas!', `Olá ${cliente.nome_completo}! Você receberá ofertas e novidades.`);
         return true;
 
     } catch (error) {
         console.error('❌ Erro durante o processo de inscrição:', error);
         
         if (Notification.permission === 'denied') {
-             showFeedback('error', 'Notificações Bloqueadas', 'Altere a permissão nas configurações do site (no cadeado 🔒).');
+             showFeedback('error', 'Notificações Bloqueadas', 'Altere a permissão nas configurações do site (ícone de cadeado 🔒 na barra de endereços).');
         } else {
             showFeedback('error', 'Ocorreu um Erro', error.message);
         }
@@ -142,7 +187,6 @@ async function subscribeUser(registration) {
 
 /**
  * Envia o objeto de inscrição para o backend.
- * @param {PushSubscription} subscription
  */
 async function saveSubscriptionToServer(subscription) {
     const cliente = JSON.parse(localStorage.getItem('cliente'));
@@ -157,20 +201,15 @@ async function saveSubscriptionToServer(subscription) {
 
     if (!response.ok) {
         const result = await response.json();
-        // Lança um erro que será capturado pelo bloco catch em `subscribeUser`
         throw new Error(result.message || 'Falha ao comunicar com o servidor.');
     }
     return response.json();
 }
 
 /**
- * Mostra uma mensagem de feedback visual na tela (para sucesso ou erro).
- * @param {'success'|'error'} type O tipo de feedback.
- * @param {string} title O título da mensagem.
- * @param {string} message O corpo da mensagem.
+ * Mostra uma mensagem de feedback visual na tela.
  */
 function showFeedback(type, title, message) {
-    // Remove qualquer feedback anterior
     const existingFeedback = document.getElementById('feedback-notification');
     if (existingFeedback) existingFeedback.remove();
 
@@ -190,6 +229,7 @@ function showFeedback(type, title, message) {
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         z-index: 10000; font-family: sans-serif;
         animation: slideInRight 0.5s ease;
+        max-width: 90%;
     `;
 
     feedback.innerHTML = `
@@ -204,14 +244,13 @@ function showFeedback(type, title, message) {
     
     document.body.appendChild(feedback);
 
-    // Animação de saída e remoção do elemento
     setTimeout(() => {
         feedback.style.animation = 'slideOutRight 0.5s ease forwards';
         setTimeout(() => feedback.remove(), 500);
     }, 5000);
 }
 
-// Adiciona as animações CSS ao head se não existirem
+// Adiciona as animações CSS ao head
 function injectAnimationStyles() {
     if (document.getElementById('notification-animations')) return;
     const style = document.createElement('style');
@@ -230,7 +269,7 @@ function injectAnimationStyles() {
     document.head.appendChild(style);
 }
 
-// Ponto de entrada: inicia o processo quando o DOM estiver pronto.
+// Ponto de entrada
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         injectAnimationStyles();
@@ -241,7 +280,6 @@ if (document.readyState === 'loading') {
     initPushNotifications();
 }
 
-// Exporta a função principal para o escopo global, caso seja necessário chamá-la de outro lugar.
 window.subscribeUser = subscribeUser;
 
 console.log('✅ Script de notificações pronto!');

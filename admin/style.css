@@ -173,6 +173,67 @@ input:checked + .slider:before { transform: translateX(22px); }
     text-transform: uppercase;
 }
 
+/* ===================================================================
+   ADICIONE ESTAS REGRAS AO FINAL DO ARQUIVO admin/style.css
+   =================================================================== */
+
+/* Badges de Notificações */
+.notif-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.notif-badge {
+    background-color: rgba(0, 200, 83, 0.2);
+    color: #00c853;
+}
+
+.notif-none {
+    background-color: rgba(118, 118, 118, 0.2);
+    color: #767676;
+}
+
+/* Botão de Notificar Cliente */
+.notify-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--admin-blue);
+    font-size: 1.1rem;
+    margin-right: 10px;
+    transition: color 0.3s;
+    padding: 5px;
+}
+
+.notify-btn:hover:not(:disabled) {
+    color: #1976d2;
+}
+
+.notify-btn:disabled {
+    color: #444;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Estilo para tabela com 5 colunas */
+.content-table table th:nth-child(4),
+.content-table table td:nth-child(4) {
+    text-align: center;
+}
+
+/* Animação para o badge de notificação */
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.notif-badge:not(.notif-none) {
+    animation: pulse-badge 2s infinite;
+}
+
 /* --- MELHORIAS DE RESPONSIVIDADE --- */
 .menu-toggle { display: none; background: none; border: 1px solid var(--admin-border); color: var(--admin-text-primary); font-size: 1.5rem; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
 

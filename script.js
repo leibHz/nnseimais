@@ -371,3 +371,5 @@ function updateCartCounter() {
         cartCounter.style.display = totalItems > 0 ? 'flex' : 'none';
     }
 }
+
+window.updateCartCounter = updateCartCounter;

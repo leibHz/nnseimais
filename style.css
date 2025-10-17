@@ -229,6 +229,137 @@ input:checked + .slider:before { transform: translateX(22px); }
 .social-links a { color: var(--text-secondary); margin-left: 15px; font-size: 1.5rem; transition: color 0.3s ease; }
 .social-links a:hover { color: var(--primary-red); }
 
+/* ===================================================================
+   ADICIONE ESTAS REGRAS AO FINAL DO ARQUIVO style.css
+   Correções para Mobile e Botão de Notificações
+   =================================================================== */
+
+/* Estilos para o botão de notificações - Mobile Friendly */
+.notification-prompt {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(229, 57, 53, 0.4);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideInUp 0.5s ease, pulse 2s infinite;
+    transition: all 0.3s ease;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    /* ✅ CORREÇÃO BUG 3: Melhorias para touch */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.notification-prompt:active {
+    transform: translateY(-3px) scale(0.98);
+}
+
+.notification-prompt:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    animation: none;
+}
+
+.notification-prompt:hover:not(:disabled) {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(229, 57, 53, 0.6);
+}
+
+.notification-prompt i {
+    font-size: 1.3rem;
+    animation: ring 2s infinite;
+}
+
+/* Animações */
+@keyframes slideInUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.05); 
+    }
+}
+
+@keyframes ring {
+    0%, 100% { 
+        transform: rotate(0deg); 
+    }
+    10%, 30% { 
+        transform: rotate(-10deg); 
+    }
+    20%, 40% { 
+        transform: rotate(10deg); 
+    }
+}
+
+/* ✅ CORREÇÃO BUG 3: Responsividade Mobile */
+@media (max-width: 768px) {
+    .notification-prompt {
+        bottom: 15px;
+        right: 15px;
+        left: 15px;
+        border-radius: 15px;
+        justify-content: center;
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        /* Garante que seja clicável em mobile */
+        min-height: 48px;
+    }
+    
+    .notification-prompt i {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-prompt span {
+        font-size: 0.9rem;
+    }
+}
+
+/* Overlay de feedback - mobile friendly */
+#feedback-notification {
+    max-width: calc(100vw - 40px) !important;
+}
+
+@media (max-width: 768px) {
+    #feedback-notification {
+        top: 20px !important;
+        right: 20px !important;
+        left: 20px !important;
+        padding: 15px 20px !important;
+    }
+    
+    #feedback-notification > div {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px !important;
+    }
+}
+
 /* Animações e Feedback */
 .spinner { width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--primary-red); border-radius: 50%; animation: spin 1s linear infinite; margin: 50px auto; }
 @keyframes spin { to { transform: rotate(360deg); } }

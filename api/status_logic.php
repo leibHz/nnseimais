@@ -28,7 +28,7 @@ function ehFeriado() {
     // Verifica se o cache existe e é válido (menos de 30 dias)
     if (file_exists($cache_file)) {
         $cache_age = time() - filemtime($cache_file);
-        $cache_valid = $cache_age < (30 * 24 * 60 * 60); // 30 dias
+        $cache_valid = $cache_age < (30 * 24 * 60 * 60) && date('Y') == $ano_atual;
         
         if ($cache_valid) {
             $feriados = json_decode(file_get_contents($cache_file), true);
