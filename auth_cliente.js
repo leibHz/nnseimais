@@ -1,4 +1,4 @@
-// ARQUIVO: auth_cliente.js (COM LÓGICA DE REDIRECIONAMENTO)
+// ARQUIVO: auth_cliente.js (ATUALIZADO COM STORAGEMANAGER)
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const cadastroForm = document.getElementById('cadastroForm');
@@ -18,13 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (!response.ok) throw result;
 
-                localStorage.setItem('cliente', JSON.stringify(result.cliente));
+                // Usa StorageManager para salvar dados do cliente
+                StorageManager.setCliente(result.cliente);
                 
-                // LÓGICA DE REDIRECIONAMENTO INTELIGENTE
+                // Lógica de redirecionamento inteligente
                 const params = new URLSearchParams(window.location.search);
                 const redirectUrl = params.get('redirect');
                 
-                // Se houver um parâmetro 'redirect', vai para essa página. Senão, vai para a principal.
                 window.location.href = redirectUrl || 'index.html';
 
             } catch (error) {
@@ -58,13 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(data)
                 });
                 
-                // MELHORIA: Tenta ler a resposta como JSON, mas se falhar, mostra como texto.
                 const responseText = await response.text();
                 let result;
                 try {
                     result = JSON.parse(responseText);
                 } catch (jsonError) {
-                    // Se não for um JSON válido, lança um erro com o texto bruto.
                     throw new Error("O servidor respondeu de forma inesperada. Detalhe: " + responseText.substring(0, 200));
                 }
 
@@ -72,12 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw result;
                 }
                 
-                sessionStorage.setItem('email_para_verificacao', data.email);
+                // Usa StorageManager para dados temporários
+                StorageManager.setTemporary('email_para_verificacao', data.email);
                 window.location.href = 'verificacao.html';
 
             } catch (error) {
                 let displayMessage = 'Ocorreu um erro. Tente novamente.';
-                // Garante que a mensagem de erro seja exibida corretamente
                 if (error && (error.message || error.error_details)) {
                     displayMessage = error.message;
                     if(error.error_details) displayMessage += ` (${error.error_details})`;
@@ -90,4 +88,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-

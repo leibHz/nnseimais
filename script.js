@@ -1,4 +1,4 @@
-// ARQUIVO: script.js (CORRIGIDO COM MELHOR TRATAMENTO DE ERRO)
+// ARQUIVO: script.js (ATUALIZADO COM STORAGEMANAGER)
 document.addEventListener('DOMContentLoaded', () => {
     const productDisplayArea = document.getElementById('product-display-area');
     const searchInput = document.getElementById('searchInput');
@@ -133,24 +133,21 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'none';
     };
 
-    // --- LÓGICA DE FILTROS E STATUS (CORRIGIDA) ---
+    // --- LÓGICA DE FILTROS E STATUS ---
     const fetchAndRenderFilters = async () => {
         try {
             const response = await fetch(API_FILTROS_URL);
             
-            // CORREÇÃO: Verifica se a resposta foi bem-sucedida
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: Não foi possível carregar os filtros`);
             }
             
             const data = await response.json();
             
-            // CORREÇÃO: Verifica se os dados são válidos antes de usar
             if (!data || data.status === 'error') {
                 throw new Error(data?.message || 'Dados de filtro inválidos');
             }
 
-            // CORREÇÃO: Usa valores padrão se os arrays não existirem
             const tags = data.tags || [];
             const sessoes = data.sessoes || [];
 
@@ -169,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Erro ao buscar filtros:", error);
             
-            // CORREÇÃO: Mostra mensagem de erro ao usuário
             if (tagFilters) {
                 tagFilters.innerHTML = `<p class="error-message">Não foi possível carregar os filtros. ${error.message}</p>`;
             }
@@ -335,9 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(checkStatusAndRefreshUI, 30000);
 });
 
-// Funções globais do carrinho
+// Funções globais do carrinho (ATUALIZADAS COM STORAGEMANAGER)
 function addToCart(product) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let cart = StorageManager.getCarrinho();
     const existingItem = cart.find(item => item.id == product.id);
     if (existingItem) {
         existingItem.quantity = product.unit === 'kg' ? (parseFloat(existingItem.quantity) + 0.1).toFixed(2) : existingItem.quantity + 1;
@@ -345,7 +341,7 @@ function addToCart(product) {
         product.quantity = product.unit === 'kg' ? 0.1 : 1;
         cart.push(product);
     }
-    localStorage.setItem('cart', JSON.stringify(cart));
+    StorageManager.setCarrinho(cart);
     updateCartCounter();
     showAddedToCartFeedback(product.id);
 }
@@ -363,7 +359,7 @@ function showAddedToCartFeedback(productId) {
 }
 
 function updateCartCounter() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart = StorageManager.getCarrinho();
     const totalItems = cart.length;
     const cartCounter = document.getElementById('cart-counter');
     if (cartCounter) {

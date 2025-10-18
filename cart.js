@@ -1,4 +1,4 @@
-// ARQUIVO: cart.js (CORRIGIDO E PADRONIZADO COM localStorage)
+// ARQUIVO: cart.js (ATUALIZADO COM STORAGEMANAGER)
 document.addEventListener('DOMContentLoaded', () => {
     const cartContainer = document.getElementById('cart-container');
     const cartSummary = document.getElementById('cart-summary');
@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const SITE_INFO_API_URL = 'api/api_site_info.php';
 
     const renderCart = () => {
-        // CORREÇÃO DEFINITIVA: Usar localStorage para o carrinho
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cart = StorageManager.getCarrinho();
         cartContainer.innerHTML = '';
 
         if (cart.length === 0) {
@@ -64,32 +63,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const updateQuantity = (id, quantity) => {
-        // CORREÇÃO DEFINITIVA: Usar localStorage para o carrinho
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let cart = StorageManager.getCarrinho();
         const itemIndex = cart.findIndex(item => item.id == id);
         if (itemIndex > -1 && quantity > 0) {
             cart[itemIndex].quantity = quantity;
-        } else if (itemIndex > -1) { // Se a quantidade for 0 ou menor, remove o item
+        } else if (itemIndex > -1) {
             cart.splice(itemIndex, 1);
         }
-        localStorage.setItem('cart', JSON.stringify(cart));
+        StorageManager.setCarrinho(cart);
         renderCart();
         updateCartCounter();
     };
 
     const removeFromCart = (id) => {
-        // CORREÇÃO DEFINITIVA: Usar localStorage para o carrinho
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let cart = StorageManager.getCarrinho();
         cart = cart.filter(item => item.id != id);
-        localStorage.setItem('cart', JSON.stringify(cart));
+        StorageManager.setCarrinho(cart);
         renderCart();
         updateCartCounter();
     };
 
     checkoutBtn.addEventListener('click', async () => {
-        // CORREÇÃO DEFINITIVA: Usar localStorage para o cliente e o carrinho
-        const cliente = JSON.parse(localStorage.getItem('cliente'));
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cliente = StorageManager.getCliente();
+        const cart = StorageManager.getCarrinho();
 
         if (!cliente) {
             alert('Você precisa estar logado para finalizar a encomenda.');
@@ -106,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
             checkoutBtn.disabled = true;
             checkoutBtn.textContent = 'Verificando...';
 
-            // ADICIONADO PARÂMETRO PARA EVITAR CACHE
             const statusResponse = await fetch(`${SITE_INFO_API_URL}?_=${new Date().getTime()}`);
             const siteConfig = await statusResponse.json();
 
@@ -129,8 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             if (response.ok) {
                 alert('Encomenda realizada com sucesso!');
-                // CORREÇÃO: Limpar o carrinho do localStorage
-                localStorage.removeItem('cart');
+                StorageManager.removeCarrinho();
                 window.location.href = 'minha-conta.html';
             } else {
                 throw new Error(result.message || 'Ocorreu um erro desconhecido.');

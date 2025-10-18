@@ -1,9 +1,10 @@
+// ARQUIVO: verificacao.js (ATUALIZADO COM STORAGEMANAGER)
 document.addEventListener('DOMContentLoaded', () => {
     const verificationForm = document.getElementById('verificationForm');
     const userEmailEl = document.getElementById('userEmail');
     const errorMessageEl = document.getElementById('errorMessage');
 
-    const email = sessionStorage.getItem('email_para_verificacao');
+    const email = StorageManager.getTemporary('email_para_verificacao');
 
     if (!email) {
         window.location.href = 'cadastro.html';
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('Conta verificada com sucesso! Você será redirecionado para a página de login.');
-                sessionStorage.removeItem('email_para_verificacao');
+                StorageManager.removeTemporary('email_para_verificacao');
                 window.location.href = 'login.html';
             } else {
                 errorMessageEl.textContent = result.message;
