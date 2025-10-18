@@ -13,38 +13,9 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/cc533e21e1.js" crossorigin="anonymous"></script>
 
-    <script>
-        // SCRIPT DE ATUALIZAÇÃO IMEDIATA DO CABEÇALHO
-        (function() {
-            const cliente = JSON.parse(localStorage.getItem('cliente'));
-            const navHTML = cliente
-                ? `<a href="minha-conta.html" class="nav-link"><i class="fa-solid fa-user"></i> Minha Conta</a>
-                   <a href="#" id="logoutBtn" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>`
-                : `<a href="login.html" class="nav-link"><i class="fa-solid fa-right-to-bracket"></i> Entrar</a>`;
-            
-            document.addEventListener('DOMContentLoaded', () => {
-                const navContainer = document.querySelector('.main-nav');
-                if (navContainer) {
-                    navContainer.innerHTML = `
-                        ${navHTML}
-                        <a href="encomenda.html" class="nav-link cart-link">
-                            <i class="fa-solid fa-cart-shopping"></i> Encomenda
-                            <span id="cart-counter" class="cart-counter">0</span>
-                        </a>
-                    `;
-
-                    if (cliente) {
-                        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-                            e.preventDefault();
-                            localStorage.clear();
-                            sessionStorage.clear();
-                            window.location.href = 'index.html';
-                        });
-                    }
-                }
-            });
-        })();
-    </script>
+    <!-- ✅ CORREÇÃO APLICADA: StorageManager + Header Script -->
+    <script src="storage-manager.js"></script>
+    <script src="header-script.js"></script>
     
     <style>
         /* Estilos para o botão de notificações */
@@ -105,7 +76,7 @@
                 <input type="text" id="searchInput" placeholder="O que você procura?">
             </div>
             <nav class="main-nav">
-                <!-- Conteúdo inserido pelo script no <head> -->
+                <!-- Conteúdo inserido pelo header-script.js -->
             </nav>
         </div>
     </header>
@@ -117,7 +88,6 @@
         <i class="fa-solid fa-bell"></i>
         <span>Receber Notificações</span>
     </button>
-
 
     <main class="container">
         <section class="hero-banner">
@@ -192,6 +162,5 @@
 
     <script src="script.js"></script>
     <script src="push-notifications.js"></script>
-    <script src="storage-manager.js"></script>
 </body>
 </html>

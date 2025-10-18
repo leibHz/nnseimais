@@ -1,0 +1,20 @@
+{
+    "value": {
+        "id_config": 1,
+        "horario_seg_sex": "01:08 - 19:08",
+        "horario_sab": "01:08 - 23:08",
+        "horario_dom_fer": "1:00 - 1:01",
+        "status_manual": "aberto",
+        "mensagem_status": "fechado sabados e feriados",
+        "encomendas_ativas": true,
+        "mensagem_encomendas": "",
+        "status_loja_real": true,
+        "mensagem_loja_real": "Loja aberta para encomendas!",
+        "proxima_abertura": null,
+        "pode_encomendar": true,
+        "eh_feriado": false,
+        "timestamp": "2025-10-18 14:20:18"
+    },
+    "expires_at": 1760808078,
+    "created_at": 1760808018
+}

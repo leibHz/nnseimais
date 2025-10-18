@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrar - Supermercado Veronesi</title>
-
-    <script>
-        // SCRIPT DE REDIRECIONAMENTO (GUARDA)
-        if (localStorage.getItem('cliente')) {
-            window.location.href = 'minha-conta.html';
-        }
-    </script>
     
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/favicon.svg">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- ✅ CORREÇÃO APLICADA: StorageManager + Redirecionamento -->
+    <script src="storage-manager.js"></script>
+    <script>
+        // Redireciona se já estiver logado
+        if (StorageManager.isLoggedIn()) {
+            window.location.href = 'minha-conta.html';
+        }
+    </script>
+    
     <!-- Estilos específicos para páginas de autenticação -->
     <style>
         .auth-body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
@@ -27,6 +30,7 @@
         .auth-btn { width: 100%; padding: 12px; border: none; border-radius: 5px; background-color: var(--primary-red); color: var(--text-primary); font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.3s ease; height: 48px; }
         .auth-link { margin-top: 20px; color: var(--text-secondary); }
         .auth-link a { color: var(--primary-blue); text-decoration: none; }
+        .error-message { color: var(--primary-red); margin-top: 15px; min-height: 20px; }
     </style>
 </head>
 <body class="auth-body">
@@ -47,7 +51,8 @@
         </form>
         <p class="auth-link">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
     </div>
-    <script src="auth_cliente.js?v=1.3"></script>
+    
+    <!-- ✅ CORREÇÃO APLICADA: Script atualizado -->
+    <script src="auth_cliente.js?v=1.4"></script>
 </body>
 </html>
-

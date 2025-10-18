@@ -1,4 +1,4 @@
-// ARQUIVO: script.js (ATUALIZADO COM STORAGEMANAGER)
+// ARQUIVO: script.js (ATUALIZADO COM STORAGEMANAGER E CORREÇÃO DE ERRO)
 document.addEventListener('DOMContentLoaded', () => {
     const productDisplayArea = document.getElementById('product-display-area');
     const searchInput = document.getElementById('searchInput');
@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let queryParams = { q: '', promocao: false, ordenar: 'alfabetica_asc', tag: null };
     let siteConfig = null;
     let allProducts = [];
+
+    // ✅ CORREÇÃO: Verifica se estamos na página de produtos antes de executar
+    const isProductPage = productDisplayArea !== null;
 
     // --- LÓGICA DE RENDERIZAÇÃO E BUSCA ---
     const fetchAndRenderProducts = async () => {
@@ -135,6 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE FILTROS E STATUS ---
     const fetchAndRenderFilters = async () => {
+        // ✅ CORREÇÃO: Só executa se os elementos existirem
+        if (!tagFilters || !sessionNav) {
+            console.log('Elementos de filtro não encontrados. Pulando renderização de filtros.');
+            return;
+        }
+
         try {
             const response = await fetch(API_FILTROS_URL);
             
@@ -195,6 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÃO PARA VERIFICAÇÃO EM TEMPO REAL ---
     const checkStatusAndRefreshUI = async () => {
+        if (!isProductPage) return; // Só verifica na página de produtos
+
         try {
             const response = await fetch(`${SITE_INFO_API_URL}?_=${new Date().getTime()}`);
             const newConfig = await response.json();
@@ -320,15 +331,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INICIALIZAÇÃO ---
     const initPage = async () => {
         await fetchSiteInfo();
-        await fetchAndRenderFilters();
-        await fetchAndRenderProducts();
+        
+        // ✅ CORREÇÃO: Só busca filtros e produtos na página de produtos
+        if (isProductPage) {
+            await fetchAndRenderFilters();
+            await fetchAndRenderProducts();
+            
+            // Inicia a verificação em tempo real apenas na página de produtos
+            setInterval(checkStatusAndRefreshUI, 30000);
+        }
+        
         updateCartCounter();
     };
 
     initPage();
-
-    // Inicia a verificação em tempo real a cada 30 segundos
-    setInterval(checkStatusAndRefreshUI, 30000);
 });
 
 // Funções globais do carrinho (ATUALIZADAS COM STORAGEMANAGER)

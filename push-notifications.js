@@ -5,7 +5,6 @@
 
 const VAPID_PUBLIC_KEY = 'BE9uBAyJB7pNQWsh7U7GbvxphNlFslYQaQguc6aYxuBXbWUd_7aZy0Kq6G7wcRUTHtIw6o27vQlhCEaM7hhcfGY';
 
-console.log('🔔 push-notifications.js carregado');
 
 /**
  * Converte uma string base64 (URL safe) para um Uint8Array.
@@ -29,18 +28,14 @@ function urlBase64ToUint8Array(base64String) {
  * Registra o Service Worker e inicializa a lógica do botão de notificação.
  */
 async function initPushNotifications() {
-    console.log('🚀 Inicializando sistema de notificações...');
     
     // ✅ CORREÇÃO 1: Verifica se o usuário está logado ANTES de continuar
     const cliente = JSON.parse(localStorage.getItem('cliente'));
     if (!cliente || !cliente.id_cliente) {
-        console.log('❌ Usuário não está logado. Notificações desabilitadas.');
         const btn = document.getElementById('notification-prompt');
         if (btn) btn.remove();
         return;
     }
-    
-    console.log('✅ Usuário logado:', cliente.nome_completo);
     
     // Verifica se o navegador suporta as tecnologias necessárias
     if (!('serviceWorker' in navigator && 'PushManager' in window)) {
@@ -50,10 +45,8 @@ async function initPushNotifications() {
 
     try {
         // Registra o Service Worker
-        console.log('📝 Registrando Service Worker...');
         const registration = await navigator.serviceWorker.register('./service-worker.js');
         await navigator.serviceWorker.ready;
-        console.log('✅ Service Worker pronto');
 
         // Configura o botão
         await setupNotificationButton(registration);
@@ -75,7 +68,6 @@ async function setupNotificationButton(registration) {
 
     // ✅ CORREÇÃO BUG 1: Esconde botão se permissão foi negada
     if (Notification.permission === 'denied') {
-        console.log('❌ Permissão negada permanentemente pelo usuário.');
         btn.remove();
         return;
     }
@@ -83,14 +75,12 @@ async function setupNotificationButton(registration) {
     // ✅ CORREÇÃO BUG 1: Verifica se já existe uma inscrição ativa
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
-        console.log('✅ Usuário já inscrito. Botão não será exibido.');
         btn.remove(); // Remove o botão permanentemente
         return;
     }
 
     // ✅ CORREÇÃO BUG 1: Esconde se já concedeu permissão mas perdeu inscrição
     if (Notification.permission === 'granted') {
-        console.log('🔔 Permissão concedida mas sem inscrição. Tentando reinscrever automaticamente...');
         const success = await subscribeUser(registration);
         if (success) {
             btn.remove();
@@ -99,7 +89,6 @@ async function setupNotificationButton(registration) {
     }
 
     // Se chegou até aqui, o usuário pode se inscrever. Mostra o botão.
-    console.log('🔔 Usuário não inscrito. Mostrando botão...');
     btn.classList.remove('hidden');
     btn.classList.add('show');
     
@@ -108,8 +97,6 @@ async function setupNotificationButton(registration) {
     const handleClick = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
-        console.log('🖱️ Botão clicado');
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Aguarde...</span>';
         
@@ -143,7 +130,6 @@ async function subscribeUser(registration) {
         }
 
         // 1. Solicita permissão ao usuário
-        console.log('🔔 Solicitando permissão...');
         
         // ✅ CORREÇÃO BUG 3: Aguarda um pouco no mobile antes de solicitar
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -155,19 +141,15 @@ async function subscribeUser(registration) {
         if (permission !== 'granted') {
             throw new Error('Permissão de notificação não concedida.');
         }
-        console.log('✅ Permissão concedida');
 
         // 2. Cria a inscrição (subscription)
-        console.log('📝 Criando inscrição...');
         const subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
         });
-        console.log('✅ Inscrição criada');
 
         // 3. Envia a inscrição para o servidor
         await saveSubscriptionToServer(subscription);
-        console.log('✅ Inscrição salva no servidor!');
         
         // 4. Mostra feedback de sucesso
         showFeedback('success', 'Notificações Ativadas!', `Olá ${cliente.nome_completo}! Você receberá ofertas e novidades.`);
@@ -281,5 +263,3 @@ if (document.readyState === 'loading') {
 }
 
 window.subscribeUser = subscribeUser;
-
-console.log('✅ Script de notificações pronto!');
