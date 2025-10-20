@@ -1,9 +1,7 @@
 <?php
 // ARQUIVO: api/api_enviar_notificacao_individual.php
 // Envia notificação para um cliente específico
-
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
+require_once __DIR__ . '/init.php';
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/config.php';

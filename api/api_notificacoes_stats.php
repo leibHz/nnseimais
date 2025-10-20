@@ -1,7 +1,7 @@
 <?php
 // ARQUIVO: api/api_notificacoes_stats.php
 // Retorna estatísticas sobre notificações push
-
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");

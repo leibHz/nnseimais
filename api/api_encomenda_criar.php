@@ -1,5 +1,6 @@
 <?php
 // ARQUIVO: api/api_encomenda_criar.php (VERSÃO REST API - SEM PDO)
+require_once __DIR__ . '/init.php';
 require 'config.php';
 require 'status_logic.php';
 

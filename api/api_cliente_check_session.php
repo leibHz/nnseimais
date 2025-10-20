@@ -1,5 +1,6 @@
 <?php
 // ARQUIVO NOVO: api/api_cliente_check_session.php (SOLUÇÃO PARA BUG 1)
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");

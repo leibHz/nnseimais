@@ -1,6 +1,7 @@
 <?php
 // ARQUIVO: api/api_encomenda_historico.php (NOVO)
 // API para buscar todas as encomendas de um cliente específico.
+require_once __DIR__ . '/init.php';
 
 require 'config.php';
 

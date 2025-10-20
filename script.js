@@ -1,4 +1,4 @@
-// ARQUIVO: script.js (ATUALIZADO COM STORAGEMANAGER E CORREÇÃO DE ERRO)
+// ARQUIVO: script.js (CORRIGIDO - BUG 2 e BUG 6)
 document.addEventListener('DOMContentLoaded', () => {
     const productDisplayArea = document.getElementById('product-display-area');
     const searchInput = document.getElementById('searchInput');
@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let siteConfig = null;
     let allProducts = [];
 
-    // ✅ CORREÇÃO: Verifica se estamos na página de produtos antes de executar
     const isProductPage = productDisplayArea !== null;
 
     // --- LÓGICA DE RENDERIZAÇÃO E BUSCA ---
@@ -56,7 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const groupedBySession = products.reduce((acc, product) => {
+        // ✅ CORREÇÃO BUG 2: Remove produtos duplicados pelo id_produto
+        const uniqueProducts = products.reduce((acc, product) => {
+            if (!acc.find(p => p.id_produto === product.id_produto)) {
+                acc.push(product);
+            }
+            return acc;
+        }, []);
+
+        const groupedBySession = uniqueProducts.reduce((acc, product) => {
             const sessionId = product.id_sessao;
             if (!acc[sessionId]) {
                 acc[sessionId] = { name: product.sessao.nome, products: [] };
@@ -138,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE FILTROS E STATUS ---
     const fetchAndRenderFilters = async () => {
-        // ✅ CORREÇÃO: Só executa se os elementos existirem
         if (!tagFilters || !sessionNav) {
             console.log('Elementos de filtro não encontrados. Pulando renderização de filtros.');
             return;
@@ -160,13 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const tags = data.tags || [];
             const sessoes = data.sessoes || [];
 
-            // Renderiza filtros de tags
             tagFilters.innerHTML = '<button class="tag-filter-btn active" data-tag="all">Todas as Tags</button>';
             tags.forEach(tag => {
                 tagFilters.innerHTML += `<button class="tag-filter-btn" data-tag="${tag.nome}">${tag.nome}</button>`;
             });
 
-            // Renderiza navegação de sessões
             sessionNav.innerHTML = '<a href="#" class="session-nav-link active" data-id="all">Todas</a>';
             sessoes.forEach(sessao => {
                 sessionNav.innerHTML += `<a href="#sessao-${sessao.id_sessao}" class="session-nav-link" data-id="${sessao.id_sessao}">${sessao.nome}</a>`;
@@ -202,9 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- FUNÇÃO PARA VERIFICAÇÃO EM TEMPO REAL ---
     const checkStatusAndRefreshUI = async () => {
-        if (!isProductPage) return; // Só verifica na página de produtos
+        if (!isProductPage) return;
 
         try {
             const response = await fetch(`${SITE_INFO_API_URL}?_=${new Date().getTime()}`);
@@ -332,12 +335,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const initPage = async () => {
         await fetchSiteInfo();
         
-        // ✅ CORREÇÃO: Só busca filtros e produtos na página de produtos
         if (isProductPage) {
             await fetchAndRenderFilters();
             await fetchAndRenderProducts();
-            
-            // Inicia a verificação em tempo real apenas na página de produtos
             setInterval(checkStatusAndRefreshUI, 30000);
         }
         
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initPage();
 });
 
-// Funções globais do carrinho (ATUALIZADAS COM STORAGEMANAGER)
+// Funções globais do carrinho
 function addToCart(product) {
     let cart = StorageManager.getCarrinho();
     const existingItem = cart.find(item => item.id == product.id);

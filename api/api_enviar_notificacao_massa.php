@@ -1,8 +1,6 @@
 <?php
 // Ficheiro: api/api_enviar_notificacao_massa.php (VERSÃO COM VERIFICAÇÃO DE AMBIENTE)
-
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
+require_once __DIR__ . '/init.php';
 
 set_error_handler(function ($severity, $message, $file, $line) {
     if (!(error_reporting() & $severity)) { return; }

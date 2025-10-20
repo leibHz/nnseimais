@@ -1,9 +1,6 @@
 <?php
 // ARQUIVO: api/api_cliente_cadastro.php (VERSÃO COM VALIDAÇÃO DE E-MAIL)
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
+require_once __DIR__ . '/init.php';
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/config.php';
 

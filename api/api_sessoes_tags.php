@@ -1,7 +1,7 @@
 <?php
 // ARQUIVO: api/api_sessoes_tags.php (VERSÃO REST API - SEM PDO)
 // API pública para buscar todas as sessões e tags para os filtros do cliente.
-
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");

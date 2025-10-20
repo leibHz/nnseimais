@@ -1,6 +1,4 @@
-// ARQUIVO: minha-conta-script.js (ATUALIZADO COM STORAGEMANAGER)
-// Script para a página minha-conta.html
-
+// ARQUIVO: minha-conta-script.js (CORRIGIDO - BUG 7)
 document.addEventListener('DOMContentLoaded', () => {
     const cliente = StorageManager.getCliente();
     const userNameEl = document.getElementById('userName');
@@ -33,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cliente) {
         userNameEl.textContent = cliente.nome_completo;
         
-        // Verifica a sessão ao carregar e depois a cada 20 segundos
         checkSession();
         fetchOrderHistory(cliente.id_cliente);
 
@@ -88,15 +85,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const statusText = order.status.replace('_', ' ');
 
+                // ✅ CORREÇÃO BUG 7: Tratamento completo de produtos deletados
                 let itemsHtml = '<ul class="order-item-list">';
                 order.encomenda_itens.forEach(item => {
-                    const productName = item.produtos ? item.produtos.nome : 'Produto indisponível';
-                    const imageUrl = item.produtos ? item.produtos.imagem_url : 'https://placehold.co/50x50';
+                    // Verifica se o produto existe e não é nulo
+                    const productName = item.produtos && item.produtos.nome 
+                        ? item.produtos.nome 
+                        : '⚠️ Produto removido do catálogo';
+                    
+                    const imageUrl = item.produtos && item.produtos.imagem_url 
+                        ? item.produtos.imagem_url 
+                        : 'https://placehold.co/50x50/333333/ffffff?text=X';
+                    
+                    const priceDisplay = parseFloat(item.preco_unitario).toLocaleString('pt-BR', { 
+                        style: 'currency', 
+                        currency: 'BRL' 
+                    });
+                    
+                    // Adiciona estilo diferente para produtos deletados
+                    const itemStyle = !item.produtos ? 'style="opacity: 0.6;"' : '';
+                    
                     itemsHtml += `
-                        <li class="order-item">
-                            <img src="${imageUrl}" alt="${productName}" onerror="this.src='https://placehold.co/50x50/e53935/ffffff?text=X'">
+                        <li class="order-item" ${itemStyle}>
+                            <img src="${imageUrl}" 
+                                 alt="${productName}" 
+                                 onerror="this.src='https://placehold.co/50x50/e53935/ffffff?text=X'">
                             <div class="order-item-details">
                                 <span>${item.quantidade}x ${productName}</span>
+                                <small style="color: var(--text-secondary);">${priceDisplay} cada</small>
                             </div>
                         </li>
                     `;

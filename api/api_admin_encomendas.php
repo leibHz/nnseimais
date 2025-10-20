@@ -1,6 +1,7 @@
 <?php
 // ARQUIVO: api/api_admin_encomendas.php (ATUALIZADO)
 // Adicionada a lógica para buscar detalhes de uma encomenda e para atualizar seu status.
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");

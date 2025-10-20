@@ -1,4 +1,4 @@
-// ARQUIVO: cart.js (ATUALIZADO COM STORAGEMANAGER)
+// ARQUIVO: cart.js (CORRIGIDO - BUG 4)
 document.addEventListener('DOMContentLoaded', () => {
     const cartContainer = document.getElementById('cart-container');
     const cartSummary = document.getElementById('cart-summary');
@@ -62,14 +62,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ✅ CORREÇÃO BUG 4: Validação completa de quantidade
     const updateQuantity = (id, quantity) => {
         let cart = StorageManager.getCarrinho();
         const itemIndex = cart.findIndex(item => item.id == id);
-        if (itemIndex > -1 && quantity > 0) {
-            cart[itemIndex].quantity = quantity;
-        } else if (itemIndex > -1) {
-            cart.splice(itemIndex, 1);
+        
+        if (itemIndex === -1) return; // Item não encontrado
+        
+        const item = cart[itemIndex];
+        const isKg = item.unit === 'kg';
+        
+        // ✅ VALIDAÇÃO: Verifica limites mínimos e máximos
+        const minQty = isKg ? 0.1 : 1;
+        const maxQty = isKg ? 50 : 999; // Limites razoáveis
+        
+        if (quantity < minQty) {
+            alert(`Quantidade mínima: ${minQty} ${item.unit}`);
+            renderCart(); // Restaura valor anterior
+            return;
         }
+        
+        if (quantity > maxQty) {
+            alert(`Quantidade máxima: ${maxQty} ${item.unit}`);
+            renderCart();
+            return;
+        }
+        
+        // ✅ VALIDAÇÃO: Para kg, arredonda para 1 casa decimal
+        if (isKg) {
+            quantity = Math.round(quantity * 10) / 10;
+        } else {
+            quantity = Math.floor(quantity); // Para unidades, garante inteiro
+        }
+        
+        // ✅ VALIDAÇÃO: Verifica se a quantidade é válida após processamento
+        if (isNaN(quantity) || quantity <= 0) {
+            alert('Quantidade inválida');
+            renderCart();
+            return;
+        }
+        
+        cart[itemIndex].quantity = quantity;
         StorageManager.setCarrinho(cart);
         renderCart();
         updateCartCounter();

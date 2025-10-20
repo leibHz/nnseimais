@@ -1,5 +1,6 @@
 <?php
-// ARQUIVO: api/api_site_info.php (VERSÃO OTIMIZADA COM CACHE)
+// ARQUIVO: api/api_site_info.php (CORRIGIDO - BUG 3)
+require_once __DIR__ . '/init.php';
 require 'config.php';
 require 'status_logic.php';
 require 'cache-manager.php';
@@ -14,9 +15,7 @@ header("Content-Type: application/json; charset=UTF-8");
 // Inicializa gerenciador de cache
 $cache = new CacheManager();
 
-// Define TTL baseado no status da loja
-// Se fechada: cache de 5 minutos
-// Se aberta: cache de 1 minuto
+// Define chave do cache
 $cache_key = 'site_info_status';
 
 // Tenta buscar do cache
@@ -54,10 +53,42 @@ if ($config) {
     $config->eh_feriado = ehFeriado();
     $config->timestamp = date('Y-m-d H:i:s');
     
-    // Define TTL dinâmico
-    $ttl = $config->pode_encomendar ? 60 : 300; // 1 min se aberto, 5 min se fechado
+    // ✅ CORREÇÃO BUG 3: Define TTL dinâmico baseado no status e proximidade de mudança
+    $ttl = 60; // Padrão: 1 minuto
     
-    // Salva no cache
+    if (!$config->pode_encomendar) {
+        // Se fechado, cache por mais tempo (5 minutos)
+        $ttl = 300;
+    } else {
+        // Se aberto, verifica se está perto de fechar
+        if ($status_calculado['status_real']) {
+            $agora = new DateTime();
+            $dia_semana = (int)$agora->format('N');
+            
+            $horario_hoje = null;
+            if ($dia_semana >= 1 && $dia_semana <= 5) {
+                $horario_hoje = $config->horario_seg_sex;
+            } elseif ($dia_semana == 6) {
+                $horario_hoje = $config->horario_sab;
+            }
+            
+            if ($horario_hoje && strpos($horario_hoje, ' - ')) {
+                list($abre, $fecha) = explode(' - ', $horario_hoje);
+                $horarioFechamento = DateTime::createFromFormat('H:i', trim($fecha));
+                
+                if ($horarioFechamento) {
+                    $minutos_restantes = ($horarioFechamento->getTimestamp() - $agora->getTimestamp()) / 60;
+                    
+                    // Se faltam menos de 30 minutos para fechar, cache de apenas 30 segundos
+                    if ($minutos_restantes <= 30 && $minutos_restantes > 0) {
+                        $ttl = 30;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Salva no cache com TTL dinâmico
     $cache->set($cache_key, $config, $ttl);
 }
 

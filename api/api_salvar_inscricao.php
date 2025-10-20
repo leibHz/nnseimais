@@ -1,7 +1,7 @@
 <?php
 // ARQUIVO: api/api_salvar_inscricao.php (VERSÃO REST API - SEM PDO)
 header('Content-Type: application/json');
-
+require_once __DIR__ . '/init.php';
 require __DIR__ . '/config.php';
 
 $json_str = file_get_contents('php://input');

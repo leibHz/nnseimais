@@ -1,5 +1,6 @@
 <?php
 // ARQUIVO: api/api_tags.php (VERSÃO REST API - SEM PDO)
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");

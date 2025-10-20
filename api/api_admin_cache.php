@@ -1,7 +1,7 @@
 <?php
 // ARQUIVO: api/api_admin_cache.php
 // API para gerenciamento de cache pelo admin
-
+require_once __DIR__ . '/init.php';
 require 'config.php';
 require 'cache-manager.php';
 

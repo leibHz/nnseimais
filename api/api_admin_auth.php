@@ -2,6 +2,7 @@
 // ARQUIVO: api/api_admin_auth.php
 // -----------------------------------------------------------------
 // Lida com a tentativa de login do administrador.
+require_once __DIR__ . '/init.php';
 
 require 'config.php'; // Inclui as chaves da API Supabase
 

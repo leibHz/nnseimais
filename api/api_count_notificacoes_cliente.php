@@ -1,7 +1,7 @@
 <?php
 // ARQUIVO: api/api_count_notificacoes_cliente.php
 // Conta quantos dispositivos um cliente tem registrados para notificações
-
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");

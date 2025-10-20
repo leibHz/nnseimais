@@ -1,5 +1,6 @@
 <?php
 // ARQUIVO: api/api_cliente_verificar.php (NOVO)
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");

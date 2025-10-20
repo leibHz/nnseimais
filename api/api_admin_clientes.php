@@ -1,5 +1,6 @@
 <?php
 // ARQUIVO: api/api_admin_clientes.php (CORREÇÃO DE BUG 2)
+require_once __DIR__ . '/init.php';
 require 'config.php';
 
 header("Access-Control-Allow-Origin: *");
